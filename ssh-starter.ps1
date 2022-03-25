@@ -1,5 +1,7 @@
 ﻿[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', '', Scope='Function', Target='Show-Choice', Justification='Known issue with scriptblocks (s. Issue #1472)')]
-param()
+param(
+    [string] $ConfigFile = ".\ssh-starter-config.json"
+)
 function Show-Choice
 {
     param (
@@ -11,6 +13,11 @@ function Show-Choice
     )
 
     $c = 1
+
+    if($Choices.Length -eq 0)
+    {
+        return @{Result=$(Read-Host $CustomQuestion); ResultId=-1}
+    }
 
     Write-Host "$Question (Default: [1]):"
 
@@ -62,7 +69,14 @@ function Show-Prompt
 
 Clear-Host
 
-$hostnames = Get-Content ..\configs\ssh-starter-config.json | ConvertFrom-Json
+if(Test-Path $ConfigFile)
+{
+    $hostnames = Get-Content $ConfigFile | ConvertFrom-Json
+}
+else
+{
+    $hostnames = @()
+}
 
 $host_choice = Show-Choice -Choices $hostnames -TextFormat { "$($_.Name)`t`t$($_.Host)" } -Question "Choose a Host" -CustomOption "Other Hostname" -CustomQuestion "Hostname"
 
@@ -94,6 +108,6 @@ else
 
 Write-Information -InformationAction Continue "`nConnecting to $user@$hostname...`n"
 
-$hostnames | ConvertTo-Json | Out-File ssh-starter-config.json
+$hostnames | ConvertTo-Json | Out-File $ConfigFile
 
 Start-Process -FilePath "ssh.exe" -ArgumentList "$user@$hostname" -Wait -NoNewWindow

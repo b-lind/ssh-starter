@@ -41,3 +41,39 @@ The corresponding entry in the settings.json might look like this:
     "name": "SSH Client",
 }
 ```
+
+### ssh-starter configuration
+The server list and the corresponding users are saved in a JSON-file. The format is shown below. By default ssh-starter searches for a config file named `ssh-starter-config.json` in the folder, where the script is located and creates a new one if none is found. To change the location of the config file you can use the `-ConfigFile` command line switch.
+
+A valid config file might look like this:
+```json
+[
+    {
+        "Users":  [
+                      "root"
+                  ],
+        "Host":  "subdomain.domain.com",
+        "Name":  "Rootserver SSH"
+    },
+    {
+        "Users":  [
+                      "root",
+                      "user01"
+                  ],
+        "Host":  "000.000.00.000",
+        "Name":  "IoT Console"
+    }
+]
+```
+
+The entry in the Windows Terminal settings.json using a custom config file location might look like this:
+```json
+{
+    "commandline": "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe .\\ssh-starter.ps1 -ConfigFile \"..\\configs\\ssh-starter-config.json\"",
+    "guid": "{5033a8c8-6b96-4860-9807-85e36312a81a}",
+    "hidden": false,
+    "icon": "%USERPROFILE%\\Documents\\Powershell\\ssh-starter\\putty-icon.png",
+    "name": "SSH Client",
+    "startingDirectory": "%USERPROFILE%\\Documents\\Powershell\\ssh-starter",
+}
+```
